@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+</head>
+<body>
+    <h2>Flight Booking Confirmation</h2>
+    <p>Dear {{ name }},</p>
+    <p>Your booking has been confirmed. Below are your flight details:</p>
+    <ul>
+        <li><strong>Flight Number:</strong> {{ flight_number }}</li>
+        <li><strong>Departure:</strong> {{ departure }}</li>
+        <li><strong>Arrival:</strong> {{ arrival }}</li>
+        <li><strong>Date:</strong> {{ date }}</li>
+        <li><strong>Seat Number:</strong> {{ seat_number }}</li>
+    </ul>
+    <p>Thank you for choosing us for your travel.</p>
+</body>
+</html>

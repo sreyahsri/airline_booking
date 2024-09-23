@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book a Flight</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Book a Flight</h2>
+        <form action="/search_flights" method="POST">
+            <div class="mb-3">
+                <label for="source" class="form-label">Source</label>
+                <input type="text" class="form-control" id="source" name="source" required>
+            </div>
+            <div class="mb-3">
+                <label for="destination" class="form-label">Destination</label>
+                <input type="text" class="form-control" id="destination" name="destination" required>
+            </div>
+            <div class="mb-3">
+                <label for="departure_date" class="form-label">Departure Date</label>
+                <input type="date" class="form-control" id="departure_date" name="departure_date" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Search Flights</button>
+        </form>
+
+        <hr>
+
+        <h3>Available Flights</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Flight ID</th>
+                    <th>Source</th>
+                    <th>Destination</th>
+                    <th>Departure Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for flight in flights %}
+                <tr>
+                    <td>{{ flight[0] }}</td>
+                    <td>{{ flight[1] }}</td>
+                    <td>{{ flight[2] }}</td>
+                    <td>{{ flight[3] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h3>Available Seats</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Seat ID</th>
+                    <th>Type</th>
+                    <th>Class</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for seat in seats %}
+                <tr id="seat_{{ seat[0] }}">
+                    <td>{{ seat[0] }}</td>
+                    <td>{{ seat[1] }}</td>
+                    <td>{{ seat[2] }}</td>
+                    <td class="seat-status">{{ seat[3] }}</td>
+                    <td><button class="btn btn-success" onclick="bookSeat('{{ seat[0] }}')">Book Seat</button></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+    <script>
+        const socket = io.connect('http://localhost:5000');
+
+        socket.on('seat_update', function(data) {
+            const seatElement = document.getElementById(`seat_${data.seat_id}`);
+            if (!data.available) {
+                seatElement.classList.add('booked');
+                seatElement.querySelector('.seat-status').textContent = 'Booked';
+            }
+        });
+
+        function bookSeat(seatId) {
+            socket.emit('book_seat', { seat_id: seatId });
+        }
+    </script>
+</body>
+</html>
